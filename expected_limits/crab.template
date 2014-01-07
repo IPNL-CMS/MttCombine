@@ -1,0 +1,26 @@
+[CRAB]
+
+jobtype = cmssw
+scheduler = remoteGlideIn
+use_server = 0
+
+[CMSSW]
+
+### The output files (comma separated list)
+output_file = outputToy.tgz
+datasetpath=None
+pset=None
+total_number_of_events=1200
+number_of_jobs=600
+
+[USER]
+script_exe = combine_crab_%mass%.sh
+additional_input_files = combine, workspaces_for_combined/workspace_combined_%mass%_1+2btag.root
+
+### OUTPUT files Management
+##  output back into UI
+return_data = 1
+ui_working_dir = crab_zprime_%mass%
+
+[GRID]
+se_black_list = T3_BY_NCPHEP,T3_US_UMiss,T2_US_Vanderbilt

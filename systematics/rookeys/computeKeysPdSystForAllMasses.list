@@ -1,0 +1,6 @@
+./computeKeysPdSyst.sh 500
+./computeKeysPdSyst.sh 750
+./computeKeysPdSyst.sh 1000
+./computeKeysPdSyst.sh 1250
+./computeKeysPdSyst.sh 1500
+./computeKeysPdSyst.sh 2000

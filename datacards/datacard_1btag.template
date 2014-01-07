@@ -3,14 +3,14 @@ jmax 1 number of background
 kmax 6 number of nuisance parameters
 ------------------------------------------------------------------------------------------------
 bin         mu_1b     e_1b
-observation 0         0
+observation 1         1
 ------------------------------------------------------------------------------------------------
 shapes * * workspaces/zprime_$MASS_workspace.root w:$PROCESS_$CHANNEL w:$PROCESS_$CHANNEL_$SYSTEMATIC
 ------------------------------------------------------------------------------------------------
 bin         mu_1b     mu_1b         e_1b      e_1b
 process     signal    background    signal    background
 process     0         1             0         1
-rate        0         0             0         0
+rate        1         1             1         1
 ------------------------------------------------------------------------------------------------
 lumi lnN    1.026     -             1.026     -
 eff  lnN    1         -             1         -

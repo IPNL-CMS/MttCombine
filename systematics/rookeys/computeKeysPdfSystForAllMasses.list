@@ -1,0 +1,6 @@
+./computeKeysPdfSyst.sh 500
+./computeKeysPdfSyst.sh 750
+./computeKeysPdfSyst.sh 1000
+./computeKeysPdfSyst.sh 1250
+./computeKeysPdfSyst.sh 1500
+./computeKeysPdfSyst.sh 2000

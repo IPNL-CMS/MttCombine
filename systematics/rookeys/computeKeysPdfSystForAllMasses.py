@@ -21,5 +21,21 @@ args = ["parallel", "-u", "-a", tmpfile.name, "-j", "6"]
 subprocess.call(args)
 #print args
 
+# all is done, merge ...
+print("Merging keys PDF systematics ...")
+
+tmpfile.seek(0)
+tmpfile.truncate(0)
+
+for mass in masses:
+    tmpfile.write("hadd -f keyspdf_syst_%s/mlfit_%s.root keyspdf_syst_%s/mlfit_%s_*.root\n" % (mass, mass, mass, mass))
+
+tmpfile.flush()
+
+args = ["parallel", "-u", "-a", tmpfile.name, "-j", "6"]
+subprocess.call(args)
+#print args
+
 tmpfile.close()
+
 

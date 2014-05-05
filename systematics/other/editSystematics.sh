@@ -1,6 +1,6 @@
 #! /bin/bash
 
-for mass in 500 625 750 1000 1250 1500 2000; do
+for mass in 500 750 1000 1250 1500 2000; do
 
     echo "M = ${mass}"
     nominal="workspaces_for_combined/workspace_combined_${mass}_1+2btag.root"
@@ -20,8 +20,8 @@ for mass in 500 625 750 1000 1250 1500 2000; do
     done
     syst_number=`echo "scale=5; $syst_number / 2." | bc`
     echo "jec  lnN    `echo \"$syst_number + 1\" | bc`    -             `echo \"$syst_number + 1\" | bc`    -"
-    sed -i "18s/.*/jec  lnN    `echo \"$syst_number + 1\" | bc`    -             `echo \"$syst_number + 1\" | bc`    -/" ../datacards/datacard_${mass}_1btag.txt
-    sed -i "18s/.*/jec  lnN    `echo \"$syst_number + 1\" | bc`    -             `echo \"$syst_number + 1\" | bc`    -/" ../datacards/datacard_${mass}_2btag.txt
+    sed -i "18s/.*/jec  lnN    `echo \"$syst_number + 1\" | bc`    -             `echo \"$syst_number + 1\" | bc`    -/" ../../datacards/datacard_${mass}_1btag.txt
+    sed -i "18s/.*/jec  lnN    `echo \"$syst_number + 1\" | bc`    -             `echo \"$syst_number + 1\" | bc`    -/" ../../datacards/datacard_${mass}_2btag.txt
 
 
     syst_number=0
@@ -37,8 +37,8 @@ for mass in 500 625 750 1000 1250 1500 2000; do
     done
     syst_number=`echo "scale=5; $syst_number / 2." | bc`
     echo "jer  lnN    `echo \"$syst_number + 1\" | bc`    -             `echo \"$syst_number + 1\" | bc`    -"
-    sed -i "19s/.*/jer  lnN    `echo \"$syst_number + 1\" | bc`    -             `echo \"$syst_number + 1\" | bc`    -/" ../datacards/datacard_${mass}_1btag.txt
-    sed -i "19s/.*/jer  lnN    `echo \"$syst_number + 1\" | bc`    -             `echo \"$syst_number + 1\" | bc`    -/" ../datacards/datacard_${mass}_2btag.txt
+    sed -i "19s/.*/jer  lnN    `echo \"$syst_number + 1\" | bc`    -             `echo \"$syst_number + 1\" | bc`    -/" ../../datacards/datacard_${mass}_1btag.txt
+    sed -i "19s/.*/jer  lnN    `echo \"$syst_number + 1\" | bc`    -             `echo \"$syst_number + 1\" | bc`    -/" ../../datacards/datacard_${mass}_2btag.txt
 
     syst_number=0
     for syst in puUp puDown; do
@@ -53,8 +53,8 @@ for mass in 500 625 750 1000 1250 1500 2000; do
     done
     syst_number=`echo "scale=5; $syst_number / 2." | bc`
     echo "pu  lnN    `echo \"$syst_number + 1\" | bc`    -             `echo \"$syst_number + 1\" | bc`    -"
-    sed -i "20s/.*/pu  lnN    `echo \"$syst_number + 1\" | bc`    -             `echo \"$syst_number + 1\" | bc`    -/" ../datacards/datacard_${mass}_1btag.txt
-    sed -i "20s/.*/pu  lnN    `echo \"$syst_number + 1\" | bc`    -             `echo \"$syst_number + 1\" | bc`    -/" ../datacards/datacard_${mass}_2btag.txt
+    sed -i "20s/.*/pu  lnN    `echo \"$syst_number + 1\" | bc`    -             `echo \"$syst_number + 1\" | bc`    -/" ../../datacards/datacard_${mass}_1btag.txt
+    sed -i "20s/.*/pu  lnN    `echo \"$syst_number + 1\" | bc`    -             `echo \"$syst_number + 1\" | bc`    -/" ../../datacards/datacard_${mass}_2btag.txt
 
     #syst_number=0
     #for syst in pdfUp pdfDown; do
@@ -69,6 +69,6 @@ for mass in 500 625 750 1000 1250 1500 2000; do
     #done
     #syst_number=`echo "scale=5; $syst_number / 2." | bc`
     #echo "pdf  lnN    `echo \"$syst_number + 1\" | bc`    -             `echo \"$syst_number + 1\" | bc`    -"
-    #sed -i "21s/.*/pdf  lnN    `echo \"$syst_number + 1\" | bc`    -             `echo \"$syst_number + 1\" | bc`    -/" ../datacards/datacard_${mass}_1btag.txt
-    #sed -i "21s/.*/pdf  lnN    `echo \"$syst_number + 1\" | bc`    -             `echo \"$syst_number + 1\" | bc`    -/" ../datacards/datacard_${mass}_2btag.txt
+    #sed -i "21s/.*/pdf  lnN    `echo \"$syst_number + 1\" | bc`    -             `echo \"$syst_number + 1\" | bc`    -/" ../../datacards/datacard_${mass}_1btag.txt
+    #sed -i "21s/.*/pdf  lnN    `echo \"$syst_number + 1\" | bc`    -             `echo \"$syst_number + 1\" | bc`    -/" ../../datacards/datacard_${mass}_2btag.txt
 done

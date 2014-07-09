@@ -14,6 +14,7 @@ git clone https://github.com/cms-analysis/HiggsAnalysis-CombinedLimit.git HiggsA
 
 cd HiggsAnalysis/CombinedLimit
 git checkout V03-05-00
+git apply ../../src/MttCombine/Fix_RooStats_MCMCInterval.patch
 cd -
 
 git clone https://github.com/IPNL-CMS/MttCombine.git

@@ -1,0 +1,167 @@
+diff --git a/interface/MarkovChainMC.h b/interface/MarkovChainMC.h
+index 9c26c8c..73d27d9 100644
+--- a/interface/MarkovChainMC.h
++++ b/interface/MarkovChainMC.h
+@@ -22,6 +22,11 @@ public:
+     static const std::string name("MarkovChainMC");
+     return name;
+   }
++
++  virtual void setNToys(const int toys) {
++    nToys_ = toys;
++  }
++
+ private:
+   enum ProposalType { FitP, UniformP, MultiGaussianP, TestP };
+   static std::string proposalTypeName_;
+@@ -55,6 +60,8 @@ private:
+   float mass_;
+   /// Number of degrees of freedom of the problem, approximately
+   int   modelNDF_;
++  /// Number of toys
++  int   nToys_;
+ 
+   static unsigned int numberOfBins_;
+   static unsigned int proposalHelperCacheSize_;
+diff --git a/src/MarkovChainMC.cc b/src/MarkovChainMC.cc
+index 65b5c06..5c0aca7 100644
+--- a/src/MarkovChainMC.cc
++++ b/src/MarkovChainMC.cc
+@@ -2,6 +2,7 @@
+ #include <stdexcept> 
+ #include <cmath> 
+ #include "TKey.h"
++#include "TCanvas.h"
+ #include "RooRealVar.h"
+ #include "RooArgSet.h"
+ #include "RooUniform.h"
+@@ -18,6 +19,7 @@ class THnSparse;
+ #include "RooStats/ProposalHelper.h"
+ #include "RooStats/ProposalFunction.h"
+ #include "RooStats/RooStatsUtils.h"
++#include "RooStats/MCMCIntervalPlot.h"
+ #include "../interface/Combine.h"
+ #include "../interface/TestProposal.h"
+ #include "../interface/DebugProposal.h"
+@@ -55,7 +57,7 @@ float MarkovChainMC::cropNSigmas_ = 0;
+ int   MarkovChainMC::debugProposal_ = false;
+ 
+ MarkovChainMC::MarkovChainMC() : 
+-    LimitAlgo("Markov Chain MC specific options") 
++    LimitAlgo("Markov Chain MC specific options"), nToys_(-1)
+ {
+     options_.add_options()
+         ("iteration,i", boost::program_options::value<unsigned int>(&iterations_)->default_value(iterations_), "Number of iterations")
+@@ -277,12 +279,110 @@ int MarkovChainMC::runOnce(RooWorkspace *w, RooStats::ModelConfig *mc_s, RooStat
+       mcInt.reset(0);
+   }
+   if (mcInt.get() == 0) return false;
++
++  // Addition by Sebastien Brochet
++  //
++  // MCMCCalculator calls SetConfidenceLevel on MCMCInterval when creating it
++  // SetConfidenceLevel calls DetermineInterval, which compute the interval from the Markov Chain
++  // for a given confidence level. This results is cached, so if we change the number of burn-in steps
++  // after, it'll have no effect
++  // Clone the MCMCInterval to reset its state, set the number of burn-in steps before calling SetConfidenceLevel
++  
++  MCMCInterval* oldInterval = mcInt.get();
++  RooStats::MarkovChain* clonedChain = slimChain(*mc_s->GetParametersOfInterest(), *oldInterval->GetChain());
++  MCMCInterval* newInterval = new MCMCInterval(TString("MCMCIntervalCloned_") + TString(mc.GetName()), RooArgSet(*mc_s->GetParametersOfInterest()), *clonedChain);
++  newInterval->SetUseKeys(oldInterval->GetUseKeys());
++  //newInterval->SetUseSparseHist(oldInterval->GetUseSparseHist());
++  newInterval->SetIntervalType(oldInterval->GetIntervalType());
++  if (newInterval->GetIntervalType() == MCMCInterval::kTailFraction) {
++    newInterval->SetLeftSideTailFraction(0);
++  }
++  newInterval->SetNumBurnInSteps(burnInSteps_);
++
+   if (adaptiveBurnIn_) {
+-    mcInt->SetNumBurnInSteps(guessBurnInSteps(*mcInt->GetChain()));
++    float bi = guessBurnInSteps(*mcInt->GetChain());
++    if (verbose > 1)
++      std::cout << "[Adaptative burn-in] Setting number of burn in steps to " << bi << std::endl;
++    newInterval->SetNumBurnInSteps(bi);
+   } else if (mcInt->GetChain()->Size() * burnInFraction_ > burnInSteps_) {
+-    mcInt->SetNumBurnInSteps(mcInt->GetChain()->Size() * burnInFraction_);
++    if (verbose > 1)
++      std::cout << "[Burn-in fraction] Setting number of burn in steps to " << mcInt->GetChain()->Size() * burnInFraction_ << std::endl;
++    newInterval->SetNumBurnInSteps(mcInt->GetChain()->Size() * burnInFraction_);
+   }
++  newInterval->SetConfidenceLevel(oldInterval->ConfidenceLevel());
++
++  mcInt.reset(newInterval);
++
+   limit = mcInt->UpperLimit(*r);
++  
++  // Save plots to output file
++  if (nToys_ <= 0) {
++    MCMCIntervalPlot plot(*mcInt);
++    TCanvas canvas("IntervalPlot");
++    plot.Draw();
++    UInt_t random = RooRandom::integer(std::numeric_limits<UInt_t>::max() - 1);
++    outputFile->WriteTObject(&canvas, TString::Format("MarkovChainIntervalPlot_m%g_%u", mass_, random));
++
++    plot.DrawNLLVsTime();
++    outputFile->WriteTObject(&canvas, TString::Format("MarkovChainNLLVsTime_m%g_%u", mass_, random));
++
++    plot.DrawNLLHist();
++    outputFile->WriteTObject(&canvas, TString::Format("MarkovChainNLLHist_m%g_%u", mass_, random));
++
++    delete gDirectory->Get("mcmc_nll_hist");
++
++    plot.DrawParameterVsTime(*r);
++    outputFile->WriteTObject(&canvas, TString::Format("MarkovChainPOIVsTime_m%g_%u", mass_, random));
++
++    plot.DrawWeightHist();
++    outputFile->WriteTObject(&canvas, TString::Format("MarkovChainWeigh_m%g_%u", mass_, random));
++
++    delete gDirectory->Get("mcmc_weight_hist");
++
++    TCanvas* c3 = new TCanvas("paramVsTime");
++    const RooArgSet* list = mc_s->GetNuisanceParameters();
++    if (list->getSize() > 1){
++      double n = list->getSize();
++      int ny = TMath::CeilNint(sqrt(n));
++      int nx = TMath::CeilNint(double(n) / ny);
++      c3->Divide(nx, ny);
++    }
++
++    // draw each nuisance parameter vs time in Markov Chain
++    TIterator* it = mc_s->GetNuisanceParameters()->createIterator();
++    RooRealVar* nuis = NULL;
++    int iPad = 1;
++    while ((nuis = (RooRealVar*) it->Next())) {
++      c3->cd(iPad++);
++      plot.DrawParameterVsTime(*nuis);
++    }
++
++    outputFile->WriteTObject(c3, TString::Format("MarkovChainParametersVsTime_m%g_%u", mass_, random));
++
++    delete c3;
++
++    TCanvas* c2 = new TCanvas("extraPlots");
++    list = mc_s->GetNuisanceParameters();
++    if (list->getSize() > 1){
++      double n = list->getSize();
++      int ny = TMath::CeilNint(sqrt(n));
++      int nx = TMath::CeilNint(double(n) / ny);
++      c2->Divide(nx, ny);
++    }
++
++    // draw a scatter plot of chain results for poi vs each nuisance parameters
++    it = mc_s->GetNuisanceParameters()->createIterator();
++    nuis = NULL;
++    iPad = 1;
++    while ((nuis = (RooRealVar*) it->Next())) {
++      c2->cd(iPad++);
++      plot.DrawChainScatter(*r, *nuis);
++    }
++
++    outputFile->WriteTObject(c2, TString::Format("MarkovChainChainsPlot_m%g_%u", mass_, random));
++
++    delete c2;
++  }
+ 
+   if (saveChain_ || mergeChains_) {
+       // Copy-constructors don't work properly, so we just have to leak memory.

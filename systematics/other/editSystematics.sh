@@ -56,6 +56,38 @@ for mass in 500 750 1000 1250 1500 2000; do
     sed -i "20s/.*/pu  lnN    `echo \"$syst_number + 1\" | bc`    -             `echo \"$syst_number + 1\" | bc`    -/" ../../datacards/datacard_${mass}_1btag.txt
     sed -i "20s/.*/pu  lnN    `echo \"$syst_number + 1\" | bc`    -             `echo \"$syst_number + 1\" | bc`    -/" ../../datacards/datacard_${mass}_2btag.txt
 
+    syst_number=0
+    for syst in btagUp btagDown; do
+      syst="workspaces_for_combined/Systematics/workspace_combined_${mass}_1+2btag_${syst}.root"
+
+      syst_xsection=`combine -M MaxLikelihoodFit --rMin -10 -m ${mass} -S 0 $syst 2>&1 | grep "Best fit r" | cut -d' ' -f4`
+      syst_xsection=${syst_xsection#-}
+      tmp=`echo "$nominal_xsection - $syst_xsection" | bc`
+      tmp=${tmp#-}
+
+      syst_number=`echo "$syst_number + $tmp" | bc`
+    done
+    syst_number=`echo "scale=5; $syst_number / 2." | bc`
+    echo "btag  lnN    `echo \"$syst_number + 1\" | bc`    -             `echo \"$syst_number + 1\" | bc`    -"
+    sed -i "21s/.*/btag  lnN    `echo \"$syst_number + 1\" | bc`    -             `echo \"$syst_number + 1\" | bc`    -/" ../../datacards/datacard_${mass}_1btag.txt
+    sed -i "21s/.*/btag  lnN    `echo \"$syst_number + 1\" | bc`    -             `echo \"$syst_number + 1\" | bc`    -/" ../../datacards/datacard_${mass}_2btag.txt
+
+    syst_number=0
+    for syst in leptUp leptDown; do
+      syst="workspaces_for_combined/Systematics/workspace_combined_${mass}_1+2btag_${syst}.root"
+
+      syst_xsection=`combine -M MaxLikelihoodFit --rMin -10 -m ${mass} -S 0 $syst 2>&1 | grep "Best fit r" | cut -d' ' -f4`
+      syst_xsection=${syst_xsection#-}
+      tmp=`echo "$nominal_xsection - $syst_xsection" | bc`
+      tmp=${tmp#-}
+
+      syst_number=`echo "$syst_number + $tmp" | bc`
+    done
+    syst_number=`echo "scale=5; $syst_number / 2." | bc`
+    echo "lept  lnN    `echo \"$syst_number + 1\" | bc`    -             `echo \"$syst_number + 1\" | bc`    -"
+    sed -i "22s/.*/lept  lnN    `echo \"$syst_number + 1\" | bc`    -             `echo \"$syst_number + 1\" | bc`    -/" ../../datacards/datacard_${mass}_1btag.txt
+    sed -i "22s/.*/lept  lnN    `echo \"$syst_number + 1\" | bc`    -             `echo \"$syst_number + 1\" | bc`    -/" ../../datacards/datacard_${mass}_2btag.txt
+
     #syst_number=0
     #for syst in pdfUp pdfDown; do
       #syst="workspaces_for_combined/Systematics/workspace_combined_${mass}_1+2btag_${syst}.root"

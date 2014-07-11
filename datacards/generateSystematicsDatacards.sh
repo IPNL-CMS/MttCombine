@@ -4,17 +4,17 @@
 
 cd Systematics
 
-for mass in 500 625 750 1000 1250 1500 2000; do
+for mass in 500 750 1000 1250 1500 2000; do
   for btag in 1 2; do
     f="../datacard_${mass}_${btag}btag.txt"
 
-    for syst in jecUp jecDown jerUp jerDown puUp puDown; do
+    for syst in jecUp jecDown jerUp jerDown puUp puDown btagUp btagDown leptUp leptDown; do
       output="datacard_${mass}_${btag}btag_${syst}.txt"
 
       sed "s/\$CHANNEL/\$CHANNEL_${syst}/g" $f > $output
     done
   done
-  for syst in jecUp jecDown jerUp jerDown puUp puDown; do
+  for syst in jecUp jecDown jerUp jerDown puUp puDown btagUp btagDown leptUp leptDown; do
     output="datacard_${mass}_1+2btag_${syst}.txt"
 
     combineCards.py datacard_${mass}_1btag_${syst}.txt datacard_${mass}_2btag_${syst}.txt > $output

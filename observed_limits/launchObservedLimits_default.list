@@ -1,6 +1,6 @@
-combine -H ProfileLikelihood -M MarkovChainMC -i 400000 --tries 100 -b 1500 -m 500 -s -1 -n Observed workspaces_for_combined/workspace_combined_500_1+2btag.root -v2
-combine -H ProfileLikelihood -M MarkovChainMC -i 400000 --tries 100 -b 1500 -m 750 -s -1 -n Observed workspaces_for_combined/workspace_combined_750_1+2btag.root -v2
-combine -H ProfileLikelihood -M MarkovChainMC -i 400000 --tries 100 -b 1500 -m 1000 -s -1 -n Observed workspaces_for_combined/workspace_combined_1000_1+2btag.root -v2
-combine -H ProfileLikelihood -M MarkovChainMC -i 400000 --tries 100 -b 1500 -m 1250 -s -1 -n Observed workspaces_for_combined/workspace_combined_1250_1+2btag.root -v2
-combine -H ProfileLikelihood -M MarkovChainMC -i 400000 --tries 100 -b 1500 -m 1500 -s -1 -n Observed workspaces_for_combined/workspace_combined_1500_1+2btag.root -v2
-combine -H ProfileLikelihood -M MarkovChainMC -i 400000 --tries 100 -b 1500 -m 2000 -s -1 -n Observed workspaces_for_combined/workspace_combined_2000_1+2btag.root -v2
+combine -H ProfileLikelihood -M MarkovChainMC -i 1600000 --tries 50 -b 1500 --burnInFraction 0 --adaptiveBurnIn 1 -m 500 -s -1 -n Observed workspaces_for_combined/workspace_combined_500_1+2btag.root -v2
+combine -H ProfileLikelihood -M MarkovChainMC -i 1600000 --tries 50 -b 1500 --burnInFraction 0 --adaptiveBurnIn 1 -m 750 -s -1 -n Observed workspaces_for_combined/workspace_combined_750_1+2btag.root -v2
+combine -H ProfileLikelihood -M MarkovChainMC -i 1600000 --tries 50 -b 1500 --burnInFraction 0 --adaptiveBurnIn 1 -m 1000 -s -1 -n Observed workspaces_for_combined/workspace_combined_1000_1+2btag.root -v2
+combine -H ProfileLikelihood -M MarkovChainMC -i 1600000 --tries 50 -b 1500 --burnInFraction 0 --adaptiveBurnIn 1 -m 1250 -s -1 -n Observed workspaces_for_combined/workspace_combined_1250_1+2btag.root -v2
+combine -H ProfileLikelihood -M MarkovChainMC -i 1600000 --tries 50 -b 1500 --burnInFraction 0 --adaptiveBurnIn 1 -m 1500 -s -1 -n Observed workspaces_for_combined/workspace_combined_1500_1+2btag.root -v2
+combine -H ProfileLikelihood -M MarkovChainMC -i 1600000 --tries 50 -b 1500 --burnInFraction 0 --adaptiveBurnIn 1 -m 2000 -s -1 -n Observed workspaces_for_combined/workspace_combined_2000_1+2btag.root -v2
